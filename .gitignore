@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Sensitive / local config ---
+# Local environment files
+.env
+.env.*
+.env.*.local
+
+# Supabase local config (may contain project IDs/credentials)
+supabase/config.toml
+
+# Common secret formats
+*.key
+*.pem
+*.p12
+credentials.json
+.secrets.env
+
+# Build / caches / coverage
+coverage
+build
+out
+.cache
+.parcel-cache
+
+# Vercel / Netlify / Firebase config
+.vercel
+.vercel/*
+.netlify
+.firebase

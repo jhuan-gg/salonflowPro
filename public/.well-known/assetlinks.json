@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.salonflow_pro_7i4z.twa",
+        "sha256_cert_fingerprints": ["82:B3:7D:D3:4C:E2:2F:C8:21:F9:84:8C:87:28:5D:E9:1F:FB:A2:F3:A4:50:F5:0F:B5:4F:00:B6:69:12:B4:F3"]
+      }
+    }]
