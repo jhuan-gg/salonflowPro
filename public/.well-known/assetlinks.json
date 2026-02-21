@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "app.vercel.salonflow_pro_7i4z.twa",
-        "sha256_cert_fingerprints": ["82:B3:7D:D3:4C:E2:2F:C8:21:F9:84:8C:87:28:5D:E9:1F:FB:A2:F3:A4:50:F5:0F:B5:4F:00:B6:69:12:B4:F3"]
+        "package_name": "app.vercel.salonflowpro.twa",
+        "sha256_cert_fingerprints": ["CC:F8:27:D5:84:2E:F4:28:9E:E8:77:31:2F:2D:A9:FD:A9:9F:64:68:DD:D1:62:A8:7A:4C:0C:FF:E7:D2:37:D5"]
       }
     }]
