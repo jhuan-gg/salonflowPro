@@ -1,24 +1,8 @@
-:root {
-  background-color: #f8fafc;
-}
-
 #root {
-  width: 100%; 
   max-width: 1280px;
   margin: 0 auto;
-  
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-
- 
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  
-  padding-left: 1rem;
-  padding-right: 1rem;
-  
-  box-sizing: border-box; 
+  padding: 2rem;
+  text-align: center;
 }
 
 .logo {
@@ -27,11 +11,9 @@
   will-change: filter;
   transition: filter 300ms;
 }
-
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
-
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -40,7 +22,6 @@
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }

@@ -105,16 +105,9 @@
     @apply border-border;
   }
 
-  html {
-    background-color: #f8fafc;
-    @apply bg-background; 
-  }
-
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
-    min-height: 100dvh; 
-    margin: 0;
   }
 
   h1, h2, h3, h4, h5, h6 {
