@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react"; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,15 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from "lucide-react";
+import { X, Search, Check } from "lucide-react";
 import { useClients } from "@/hooks/useClients";
 import { useServices } from "@/hooks/useServices";
 import { useAttendants } from "@/hooks/useAttendants";
+import { cn } from "@/lib/utils";
+
 
 interface AppointmentFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: {
+    id?: string; 
     client_id: string;
     attendant_id: string;
     date: string;
@@ -28,6 +31,7 @@ interface AppointmentFormDialogProps {
   }) => void;
   loading?: boolean;
   initialDate?: string;
+  initialData?: any; 
 }
 
 const RETURN_OPTIONS = [
@@ -38,7 +42,14 @@ const RETURN_OPTIONS = [
   { value: 30, label: "30 dias" },
 ];
 
-export function AppointmentFormDialog({ open, onOpenChange, onSubmit, loading, initialDate }: AppointmentFormDialogProps) {
+export function AppointmentFormDialog({ 
+  open, 
+  onOpenChange, 
+  onSubmit, 
+  loading, 
+  initialDate,
+  initialData 
+}: AppointmentFormDialogProps) {
   const { data: clients } = useClients();
   const { data: services } = useServices();
   const { data: attendants } = useAttendants();
@@ -50,10 +61,43 @@ export function AppointmentFormDialog({ open, onOpenChange, onSubmit, loading, i
   const [notes, setNotes] = useState("");
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [returnDays, setReturnDays] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const activeClients = clients?.filter((c) => c.active) ?? [];
-  const activeServices = services?.filter((s) => s.active) ?? [];
-  const activeAttendants = attendants?.filter((a) => a.active) ?? [];
+  useEffect(() => {
+  if (open) {
+    if (initialData) {
+      setClientId(initialData.client_id || "");
+      setAttendantId(initialData.attendant_id || "");
+      setDate(initialData.date || "");
+      setStartTime(initialData.start_time?.slice(0, 5) || "09:00");
+      setNotes(initialData.notes || "");
+      setReturnDays(initialData.return_days || null);
+
+      const serviceIds = initialData.appointment_services?.map((as: any) => as.service_id) || [];
+      setSelectedServices(serviceIds);
+      
+    } else {
+      setClientId("");
+      setAttendantId("");
+      setDate(initialDate || new Date().toISOString().split("T")[0]);
+      setStartTime("09:00");
+      setNotes("");
+      setSelectedServices([]);
+      setReturnDays(null);
+    }
+  }
+}, [open, initialData, initialDate]);
+
+  const activeClients = clients?.filter((c) => c.active || c.id === clientId) ?? [];
+  const activeServices = services?.filter((s) => s.active || selectedServices.includes(s.id)) ?? [];
+  const activeAttendants = attendants?.filter((a) => a.active || a.id === attendantId) ?? [];
+
+  const filteredServices = useMemo(() => {
+    if (!searchTerm) return activeServices;
+    return activeServices.filter((s) =>
+      s.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, activeServices]);
 
   const totalPrice = useMemo(() => {
     return activeServices
@@ -71,21 +115,13 @@ export function AppointmentFormDialog({ open, onOpenChange, onSubmit, loading, i
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
   const handleOpenChange = (v: boolean) => {
-    if (v) {
-      setClientId("");
-      setAttendantId("");
-      setDate(initialDate || new Date().toISOString().split("T")[0]);
-      setStartTime("09:00");
-      setNotes("");
-      setSelectedServices([]);
-      setReturnDays(null);
-    }
     onOpenChange(v);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
+      ...(initialData?.id && { id: initialData.id }), 
       client_id: clientId,
       attendant_id: attendantId,
       date,
@@ -103,13 +139,13 @@ export function AppointmentFormDialog({ open, onOpenChange, onSubmit, loading, i
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="w-full h-[100dvh] max-w-none m-0 rounded-none sm:max-w-lg sm:h-auto sm:m-auto sm:rounded-lg">
         <DialogHeader>
-          <DialogTitle>Novo Agendamento</DialogTitle>
+          <DialogTitle>{initialData ? "Editar Agendamento" : "Novo Agendamento"}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[100vh] pr-4">
+        <ScrollArea className="max-h-[80vh] pr-4">
           <form onSubmit={handleSubmit} className="space-y-4" id="appointment-form">
             <div className="space-y-2">
               <Label>Clientes *</Label>
-              <Select value={clientId} onValueChange={setClientId}>
+              <Select value={clientId} onValueChange={setClientId} disabled={!!initialData}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o cliente" />
                 </SelectTrigger>
@@ -123,30 +159,65 @@ export function AppointmentFormDialog({ open, onOpenChange, onSubmit, loading, i
 
             <div className="space-y-2">
               <Label>Serviços *</Label>
-              <div className="border rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
-                {activeServices.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Nenhum serviço cadastrado</p>
+              
+              {/* Input de Busca */}
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar serviço..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8 h-9"
+                />
+              </div>
+
+              {/* Lista Resultante */}
+              <div className="border rounded-lg p-1 space-y-1 max-h-48 overflow-y-auto bg-background">
+                {filteredServices.length === 0 ? (
+                  <p className="text-xs text-center py-4 text-muted-foreground">
+                    Nenhum serviço encontrado
+                  </p>
                 ) : (
-                  activeServices.map((s) => (
-                    <label key={s.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-1 rounded">
-                      <Checkbox
-                        checked={selectedServices.includes(s.id)}
-                        onCheckedChange={() => toggleService(s.id)}
-                      />
-                      <span className="text-sm flex-1">{s.name}</span>
-                      <span className="text-sm text-muted-foreground">{formatCurrency(s.price)}</span>
-                    </label>
-                  ))
+                  filteredServices.map((s) => {
+                    const isSelected = selectedServices.includes(s.id);
+                    return (
+                      <div
+                        key={s.id}
+                        onClick={() => toggleService(s.id)}
+                        className={cn(
+                          "flex items-center justify-between gap-2 cursor-pointer hover:bg-accent hover:text-accent-foreground p-2 rounded-md transition-colors",
+                          isSelected && "bg-accent/50"
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className={cn(
+                            "flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                            isSelected ? "bg-primary text-primary-foreground" : "opacity-50"
+                          )}>
+                            {isSelected && <Check className="h-3 w-3" />}
+                          </div>
+                          <span className="text-sm font-medium">{s.name}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">{formatCurrency(s.price)}</span>
+                      </div>
+                    );
+                  })
                 )}
               </div>
               {selectedServices.length > 0 && (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1 mt-2">
                   {selectedServices.map((sid) => {
                     const svc = activeServices.find((s) => s.id === sid);
                     return svc ? (
-                      <Badge key={sid} variant="secondary" className="gap-1">
+                      <Badge key={sid} variant="secondary" className="gap-1 pr-1">
                         {svc.name}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleService(sid)} />
+                        <X 
+                          className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleService(sid);
+                          }} 
+                        />
                       </Badge>
                     ) : null;
                   })}
@@ -208,14 +279,14 @@ export function AppointmentFormDialog({ open, onOpenChange, onSubmit, loading, i
 
             <div className="space-y-2">
               <Label htmlFor="appt-notes">Observações</Label>
-              <Textarea id="appt-notes" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} rows={2} placeholder="Observações opcionais..." />
+              <Textarea id="appt-notes" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} rows={2} placeholder="Ex: Adicionar novos serviços durante a consulta..." />
             </div>
           </form>
         </ScrollArea>
-        <DialogFooter className="gap-3 p-2">
+        <DialogFooter className="gap-3 p-2 pt-4">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button type="submit" form="appointment-form" disabled={loading || !canSubmit}>
-            {loading ? "Salvando..." : "Agendar"}
+            {loading ? "Salvando..." : initialData ? "Salvar Alterações" : "Agendar"}
           </Button>
         </DialogFooter>
       </DialogContent>

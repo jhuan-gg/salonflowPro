@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Play, CheckCircle, XCircle, Trash2, Clock, ExternalLink, User, MoreVertical } from "lucide-react";
+import { Play, CheckCircle, XCircle, Trash2, Clock, ExternalLink, User, MoreVertical, Pencil } from "lucide-react";
 import type { Appointment } from "@/hooks/useAppointments";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -17,9 +17,10 @@ interface AppointmentCardProps {
   onChangeStatus: (id: string, status: string) => void;
   onDelete: (id: string) => void;
   onComplete: (appointment: Appointment) => void;
+  onEdit: () => void;
 }
 
-export function AppointmentCard({ appointment, onChangeStatus, onDelete, onComplete }: AppointmentCardProps) {
+export function AppointmentCard({ appointment, onChangeStatus, onDelete, onComplete, onEdit }: AppointmentCardProps) {
   const statusCfg = STATUS_CONFIG[appointment.status] || STATUS_CONFIG.scheduled;
 
   const formatCurrency = (value: number) =>
@@ -33,13 +34,14 @@ export function AppointmentCard({ appointment, onChangeStatus, onDelete, onCompl
   return (
     <TooltipProvider>
       <Card className="overflow-hidden border-border shadow-sm bg-card hover:shadow-md transition-all">
+        {/* Header do Card */}
         <div className="bg-muted/50 px-4 py-2 border-b flex justify-between items-center text-xs text-muted-foreground">
           <span className="flex items-center gap-2 font-medium">
             <span className="text-foreground font-bold">{appointment.start_time?.slice(0, 5)}</span>
             <span className="opacity-50">|</span>
             <span className="flex items-center gap-1">
-               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: appointment.attendants?.color }} />
-               {appointment.attendants?.name}
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: appointment.attendants?.color }} />
+              {appointment.attendants?.name}
             </span>
           </span>
           <Badge variant={statusCfg.variant} className="text-[10px] font-normal gap-1">
@@ -66,6 +68,21 @@ export function AppointmentCard({ appointment, onChangeStatus, onDelete, onCompl
               </span>
 
               <div className="flex items-center gap-1">
+                {/* BOTÃO EDITAR */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 text-muted-foreground hover:bg-accent"
+                      onClick={onEdit}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Editar Agendamento</TooltipContent>
+                </Tooltip>
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-9 w-9 text-primary hover:bg-primary/10" onClick={() => window.open(`/comprovante/${appointment.id}`, "_blank")}>
@@ -108,6 +125,7 @@ export function AppointmentCard({ appointment, onChangeStatus, onDelete, onCompl
               </div>
             </div>
           </div>
+          {/* Notas seguem iguais */}
           {appointment.notes && (
             <p className="text-[11px] text-muted-foreground italic mt-3 bg-muted/30 p-2 rounded border-l-2 border-primary/30">
               {appointment.notes}
