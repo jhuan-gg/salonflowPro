@@ -141,7 +141,7 @@ export function AppointmentFormDialog({
         <DialogHeader>
           <DialogTitle>{initialData ? "Editar Agendamento" : "Novo Agendamento"}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[80vh] pr-4">
+        <ScrollArea className="flex-1 px-6">
           <form onSubmit={handleSubmit} className="space-y-4" id="appointment-form">
             <div className="space-y-2">
               <Label>Clientes *</Label>
