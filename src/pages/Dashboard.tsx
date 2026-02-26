@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { 
+import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell 
+  BarChart, Bar, Cell
 } from 'recharts';
 
 export default function Dashboard() {
@@ -18,9 +18,19 @@ export default function Dashboard() {
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
       // 1. Contagens básicas
+      const hojeInicio = new Date();
+      hojeInicio.setHours(0, 0, 0, 0);
       const { count: totalHoje } = await supabase.from("appointments").select("*", { count: 'exact', head: true }).eq("date", hoje);
       const { count: totalClientes } = await supabase.from("clients").select("*", { count: 'exact', head: true });
       const { count: totalServicos } = await supabase.from("services").select("*", { count: 'exact', head: true });
+
+      const { data: pagamentosHoje } = await supabase
+        .from("payments")
+        .select("amount")
+        .gte("created_at", hojeInicio.toISOString());
+
+      const faturamentoDiario = pagamentosHoje?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
+
 
       // 2. Faturamento Mensal
       const primeiroDiaMes = new Date();
@@ -46,6 +56,7 @@ export default function Dashboard() {
         hoje: totalHoje || 0,
         clientes: totalClientes || 0,
         faturamento: faturamento,
+        faturamentoDiario: faturamentoDiario, 
         servicos: totalServicos || 0,
         chartRevenue
       };
@@ -56,9 +67,10 @@ export default function Dashboard() {
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
   const stats = [
+    { label: "Faturamento Hoje", value: formatCurrency(statsData?.faturamentoDiario || 0), icon: DollarSign, color: "text-emerald-500" },
+    { label: "Faturamento Mensal", value: formatCurrency(statsData?.faturamento || 0), icon: DollarSign, color: "text-green-600" },
     { label: "Agendamentos Hoje", value: statsData?.hoje.toString() || "0", icon: CalendarDays, color: "text-primary" },
     { label: "Clientes Ativos", value: statsData?.clientes.toString() || "0", icon: Users, color: "text-blue-500" },
-    { label: "Faturamento Mensal", value: formatCurrency(statsData?.faturamento || 0), icon: DollarSign, color: "text-green-600" },
     { label: "Serviços Ativos", value: statsData?.servicos.toString() || "0", icon: Scissors, color: "text-orange-500" },
   ];
 
@@ -74,14 +86,15 @@ export default function Dashboard() {
             <Plus className="h-4 w-4" /> Novo Agendamento
           </Button>
         </div>
+        
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-sans">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 font-sans">
           {stats.map((stat) => (
             <Card key={stat.label}>
               <CardContent className="p-4 md:p-6">
                 <stat.icon className={`h-5 w-5 ${stat.color} mb-3`} />
-                <div className="text-2xl font-bold">{isLoading ? "---" : stat.value}</div>
+                <div className="text-xl md:text-2xl font-bold">{isLoading ? "---" : stat.value}</div>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
               </CardContent>
             </Card>
@@ -99,14 +112,14 @@ export default function Dashboard() {
                 <AreaChart data={statsData?.chartRevenue}>
                   <defs>
                     <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} tick={{fill: '#888'}} />
-                  <YAxis axisLine={false} tickLine={false} fontSize={12} tick={{fill: '#888'}} />
-                  <Tooltip 
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} tick={{ fill: '#888' }} />
+                  <YAxis axisLine={false} tickLine={false} fontSize={12} tick={{ fill: '#888' }} />
+                  <Tooltip
                     contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   />
                   <Area type="monotone" dataKey="total" stroke="#8884d8" fillOpacity={1} fill="url(#colorTotal)" strokeWidth={3} />
