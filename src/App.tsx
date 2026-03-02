@@ -14,9 +14,10 @@ import Atendentes from "./pages/Atendentes";
 import Historico from "./pages/Historico";
 import Materiais from "./pages/Materiais";
 import Mais from "./pages/Mais";
-import Receipt from "./pages/Receipt"; // <-- Adicione este import
+import Receipt from "./pages/Receipt"; 
 import NotFound from "./pages/NotFound";
 import { ReactNode } from "react";
+import ReloadPrompt from './pages/ReloadPrompt';
 
 const queryClient = new QueryClient();
 
@@ -43,13 +44,12 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <ReloadPrompt />
           <BrowserRouter>
             <Routes>
-              {/* ROTAS PÚBLICAS (Acessíveis sem login) */}
               <Route path="/auth" element={<Auth />} />
-              <Route path="/comprovante/:id" element={<Receipt />} /> {/* <-- A mágica está aqui */}
+              <Route path="/comprovante/:id" element={<Receipt />} /> 
 
-              {/* ROTAS PROTEGIDAS (Exigem login) */}
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/agenda" element={<ProtectedRoute><Agenda /></ProtectedRoute>} />
               <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />

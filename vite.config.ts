@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: ["favicon.ico", ".well-known/assetlinks.json"],
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
