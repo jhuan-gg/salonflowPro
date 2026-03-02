@@ -56,7 +56,7 @@ export default function Dashboard() {
         hoje: totalHoje || 0,
         clientes: totalClientes || 0,
         faturamento: faturamento,
-        faturamentoDiario: faturamentoDiario, 
+        faturamentoDiario: faturamentoDiario,
         servicos: totalServicos || 0,
         chartRevenue
       };
@@ -86,15 +86,20 @@ export default function Dashboard() {
             <Plus className="h-4 w-4" /> Novo Agendamento
           </Button>
         </div>
-        
+
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 font-sans">
-          {stats.map((stat) => (
-            <Card key={stat.label}>
+          {stats.map((stat, index) => (
+            <Card
+              key={stat.label}
+              className={index === 0 ? "col-span-2 md:col-span-1" : ""}
+            >
               <CardContent className="p-4 md:p-6">
                 <stat.icon className={`h-5 w-5 ${stat.color} mb-3`} />
-                <div className="text-xl md:text-2xl font-bold">{isLoading ? "---" : stat.value}</div>
+                <div className="text-xl md:text-2xl font-bold">
+                  {isLoading ? "---" : stat.value}
+                </div>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
               </CardContent>
             </Card>

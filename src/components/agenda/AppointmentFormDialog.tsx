@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"; 
+import { useState, useMemo, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,7 @@ interface AppointmentFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: {
-    id?: string; 
+    id?: string;
     client_id: string;
     attendant_id: string;
     date: string;
@@ -31,7 +31,7 @@ interface AppointmentFormDialogProps {
   }) => void;
   loading?: boolean;
   initialDate?: string;
-  initialData?: any; 
+  initialData?: any;
 }
 
 const RETURN_OPTIONS = [
@@ -42,13 +42,13 @@ const RETURN_OPTIONS = [
   { value: 30, label: "30 dias" },
 ];
 
-export function AppointmentFormDialog({ 
-  open, 
-  onOpenChange, 
-  onSubmit, 
-  loading, 
+export function AppointmentFormDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  loading,
   initialDate,
-  initialData 
+  initialData
 }: AppointmentFormDialogProps) {
   const { data: clients } = useClients();
   const { data: services } = useServices();
@@ -64,29 +64,29 @@ export function AppointmentFormDialog({
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-  if (open) {
-    if (initialData) {
-      setClientId(initialData.client_id || "");
-      setAttendantId(initialData.attendant_id || "");
-      setDate(initialData.date || "");
-      setStartTime(initialData.start_time?.slice(0, 5) || "09:00");
-      setNotes(initialData.notes || "");
-      setReturnDays(initialData.return_days || null);
+    if (open) {
+      if (initialData) {
+        setClientId(initialData.client_id || "");
+        setAttendantId(initialData.attendant_id || "");
+        setDate(initialData.date || "");
+        setStartTime(initialData.start_time?.slice(0, 5) || "09:00");
+        setNotes(initialData.notes || "");
+        setReturnDays(initialData.return_days || null);
 
-      const serviceIds = initialData.appointment_services?.map((as: any) => as.service_id) || [];
-      setSelectedServices(serviceIds);
-      
-    } else {
-      setClientId("");
-      setAttendantId("");
-      setDate(initialDate || new Date().toISOString().split("T")[0]);
-      setStartTime("09:00");
-      setNotes("");
-      setSelectedServices([]);
-      setReturnDays(null);
+        const serviceIds = initialData.appointment_services?.map((as: any) => as.service_id) || [];
+        setSelectedServices(serviceIds);
+
+      } else {
+        setClientId("");
+        setAttendantId("");
+        setDate(initialDate || new Date().toISOString().split("T")[0]);
+        setStartTime("09:00");
+        setNotes("");
+        setSelectedServices([]);
+        setReturnDays(null);
+      }
     }
-  }
-}, [open, initialData, initialDate]);
+  }, [open, initialData, initialDate]);
 
   const activeClients = clients?.filter((c) => c.active || c.id === clientId) ?? [];
   const activeServices = services?.filter((s) => s.active || selectedServices.includes(s.id)) ?? [];
@@ -121,7 +121,7 @@ export function AppointmentFormDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      ...(initialData?.id && { id: initialData.id }), 
+      ...(initialData?.id && { id: initialData.id }),
       client_id: clientId,
       attendant_id: attendantId,
       date,
@@ -141,8 +141,8 @@ export function AppointmentFormDialog({
         <DialogHeader>
           <DialogTitle>{initialData ? "Editar Agendamento" : "Novo Agendamento"}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="flex-1 px-6">
-          <form onSubmit={handleSubmit} className="space-y-4" id="appointment-form">
+        <ScrollArea className="flex-1 w-full">
+          <form onSubmit={handleSubmit} className="space-y-4 px-1" id="appointment-form">
             <div className="space-y-2">
               <Label>Clientes *</Label>
               <Select value={clientId} onValueChange={setClientId} disabled={!!initialData}>
@@ -159,8 +159,7 @@ export function AppointmentFormDialog({
 
             <div className="space-y-2">
               <Label>Serviços *</Label>
-              
-              {/* Input de Busca */}
+
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -171,7 +170,6 @@ export function AppointmentFormDialog({
                 />
               </div>
 
-              {/* Lista Resultante */}
               <div className="border rounded-lg p-1 space-y-1 max-h-48 overflow-y-auto bg-background">
                 {filteredServices.length === 0 ? (
                   <p className="text-xs text-center py-4 text-muted-foreground">
@@ -211,12 +209,12 @@ export function AppointmentFormDialog({
                     return svc ? (
                       <Badge key={sid} variant="secondary" className="gap-1 pr-1">
                         {svc.name}
-                        <X 
-                          className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                        <X
+                          className="h-3 w-3 cursor-pointer hover:text-destructive"
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleService(sid);
-                          }} 
+                          }}
                         />
                       </Badge>
                     ) : null;
@@ -286,7 +284,7 @@ export function AppointmentFormDialog({
         <DialogFooter className="gap-3 p-2 pt-4">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button type="submit" form="appointment-form" disabled={loading || !canSubmit}>
-            {loading ? "Salvando..." : initialData ? "Salvar Alterações" : "Agendar"}
+            {loading ? "Salvando..." : initialData ? "Salvar Alterações" : "Iniciar Agendamento"}
           </Button>
         </DialogFooter>
       </DialogContent>

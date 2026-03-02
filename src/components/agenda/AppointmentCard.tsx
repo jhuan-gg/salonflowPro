@@ -69,19 +69,21 @@ export function AppointmentCard({ appointment, onChangeStatus, onDelete, onCompl
 
               <div className="flex items-center gap-1">
                 {/* BOTÃO EDITAR */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 text-muted-foreground hover:bg-accent"
-                      onClick={onEdit}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Editar Agendamento</TooltipContent>
-                </Tooltip>
+                {(appointment.status !== "completed" && appointment.status !== "canceled") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 text-muted-foreground hover:bg-accent"
+                        onClick={onEdit}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Editar Agendamento</TooltipContent>
+                  </Tooltip>
+                )}
 
                 <Tooltip>
                   <TooltipTrigger asChild>

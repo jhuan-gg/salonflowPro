@@ -37,7 +37,6 @@ export default function Agenda() {
   const updateStatus = useUpdateAppointmentStatus();
   const deleteAppointment = useDeleteAppointment();
 
-  // Cálculo do intervalo de datas
   const { rangeStart, rangeEnd } = useMemo(() => {
     switch (viewMode) {
       case "week":
@@ -64,7 +63,33 @@ export default function Agenda() {
     return appointments.filter((a) => a.attendant_id === filterAttendant);
   }, [appointments, filterAttendant]);
 
-  // Handlers
+  const calendarRange = useMemo(() => {
+    return {
+      start: startOfMonth(selectedDate),
+      end: endOfMonth(selectedDate),
+    };
+  }, [selectedDate]);
+
+  const { data: calendarAppointments } = useAppointmentsByRange(
+    format(calendarRange.start, "yyyy-MM-dd"),
+    format(calendarRange.end, "yyyy-MM-dd")
+  );
+
+
+  const daysWithPendingAppointments = useMemo(() => {
+    if (!calendarAppointments) return [];
+
+    const pending = calendarAppointments.filter(
+      (a) => a.status !== "completed" && a.status !== "canceled"
+    );
+
+    return pending.map((a) => {
+      const [year, month, day] = a.date.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    });
+  }, [calendarAppointments]);
+
+
   const handleFormSubmit = async (data: any) => {
     try {
       if (editingAppointment) {
@@ -152,7 +177,6 @@ export default function Agenda() {
   return (
     <AppLayout>
       <div className="p-4 md:p-8 space-y-4 animate-fade-in">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl md:text-3xl font-display font-bold">Agenda</h1>
@@ -163,7 +187,6 @@ export default function Agenda() {
           </Button>
         </div>
 
-        {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={() => navigate(-1)}><ChevronLeft className="h-4 w-4" /></Button>
@@ -193,7 +216,7 @@ export default function Agenda() {
 
         <div className="flex gap-6">
           {!isMobile && viewMode !== "month" && (
-            <div className="hidden lg:block shrink-0">
+            <div className="hidden lg:block shrink-0 calendar-container">
               <Card>
                 <CardContent className="p-3">
                   <Calendar
@@ -201,6 +224,29 @@ export default function Agenda() {
                     selected={selectedDate}
                     onSelect={(d) => d && setSelectedDate(d)}
                     locale={ptBR}
+                  
+                    modifiers={{
+                      hasPending: daysWithPendingAppointments,
+                    }}
+                    modifiersClassNames={{
+                      hasPending: "relative font-bold after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-primary after:rounded-full after:cursor-pointer",
+                    }}
+                    components={{
+                      DayContent: ({ date, ...props }) => {
+                        const hasPending = daysWithPendingAppointments.some((d) =>
+                          isSameDay(d, date)
+                        );
+
+                        return (
+                          <div
+                            className="relative w-full h-full flex items-center justify-center"
+                            title={hasPending ? "Possui agendamentos em aberto" : ""}
+                          >
+                            {date.getDate()}
+                          </div>
+                        );
+                      },
+                    }}
                   />
                 </CardContent>
               </Card>

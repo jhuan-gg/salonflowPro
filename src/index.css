@@ -114,3 +114,16 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 }
+
+@layer components {
+  /* Regra com especificidade máxima para o dia selecionado */
+  .calendar-container .rdp-day_selected,
+  .calendar-container .rdp-day_selected:hover,
+  .calendar-container .rdp-day_selected:focus {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    border-radius: var(--radius) !important;
+    opacity: 1 !important;
+    border: none !important;
+  }
+}
