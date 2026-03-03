@@ -150,13 +150,13 @@ export function ClientFormDialog({ open, onOpenChange, client, onSubmit, loading
             <Switch id="cli-active" checked={active} onCheckedChange={setActive} />
             <Label htmlFor="cli-active">Ativo</Label>
           </div>
-        </form>
           <DialogFooter className="gap-3 p-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
             <Button type="submit" disabled={loading || !name.trim()}>
               {loading ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
