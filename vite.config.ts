@@ -29,13 +29,21 @@ export default defineConfig(({ mode }) => ({
         name: "Saloon flow - Gestão de Salão",
         short_name: "Saloon flow",
         description: "Sistema completo de gestão para salão de beleza",
-        theme_color: "#f8fafc",
-        background_color: "#f8fafc",
+
+        theme_color: "#0b0e14",
+        background_color: "#0b0e14",
+
         display: "standalone",
+
         orientation: "portrait",
         icons: [
           { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png" },
-          { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+          {
+            src: "/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable"
+          },
         ],
       },
     }),

@@ -105,17 +105,45 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+  html {
+    /* Garante que o scroll seja suave e preencha tudo */
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  body {
+    /* Mudança: bg-background garante a cor da meta tag / manifest */
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+
+    /* Crucial para PWA Edge-to-Edge */
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+
+    /* Evita bounces indesejados no iOS que mostram fundo branco */
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Utilitário para garantir que elementos importantes (como botões fixos) 
+     não fiquem "atrás" da linha de navegação do iPhone/Android */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
 @layer components {
+
   /* Regra com especificidade máxima para o dia selecionado */
   .calendar-container .rdp-day_selected,
   .calendar-container .rdp-day_selected:hover,
