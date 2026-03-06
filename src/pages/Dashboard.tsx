@@ -108,13 +108,14 @@ export default function Dashboard() {
 
         {/* Gráficos */}
         <div className="grid md:grid-cols-1 gap-6">
-          <Card className="p-6">
+          <Card className="p-0 bg-transparent border-none shadow-none md:p-6 md:bg-card md:border md:border-border md:shadow-sm">
             <CardHeader className="px-0 pt-0">
               <CardTitle className="text-lg font-sans">Desempenho Semanal (R$)</CardTitle>
             </CardHeader>
             <div className="h-[300px] w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={statsData?.chartRevenue}>
+                <AreaChart data={statsData?.chartRevenue}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }} >
                   <defs>
                     <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3} />
