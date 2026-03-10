@@ -81,13 +81,13 @@ export function ServiceFormDialog({ open, onOpenChange, service, onSubmit, loadi
             <Switch id="active" checked={active} onCheckedChange={setActive} />
             <Label htmlFor="active">Ativo</Label>
           </div>
-        </form>
           <DialogFooter className="gap-3 p-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
             <Button type="submit" disabled={loading || !name.trim()}>
               {loading ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -105,17 +105,39 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+  html {
+    /* Permite que o conteúdo preencha toda a tela, incluindo áreas de sistema */
+    height: -webkit-fill-available;
+    background-color: hsl(var(--background));
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  body {
+    @apply bg-background text-foreground;
+    /* Ocupa a altura total dinâmica */
+    min-height: 100dvh;
+    /* Importante: Remove qualquer padding que o navegador tente colocar automaticamente */
+    padding: 0 !important;
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Utilitário para garantir que elementos importantes (como botões fixos) 
+     não fiquem "atrás" da linha de navegação do iPhone/Android */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
 @layer components {
+
   /* Regra com especificidade máxima para o dia selecionado */
   .calendar-container .rdp-day_selected,
   .calendar-container .rdp-day_selected:hover,
