@@ -14,6 +14,11 @@ import { useServices } from "@/hooks/useServices";
 import { useAttendants } from "@/hooks/useAttendants";
 import { cn } from "@/lib/utils";
 
+const getTodayString = () => {
+  const agora = new Date();
+  const offset = agora.getTimezoneOffset() * 60000;
+  return new Date(agora.getTime() - offset).toISOString().split("T")[0];
+};
 
 interface AppointmentFormDialogProps {
   open: boolean;
@@ -56,12 +61,13 @@ export function AppointmentFormDialog({
 
   const [clientId, setClientId] = useState("");
   const [attendantId, setAttendantId] = useState("");
-  const [date, setDate] = useState(initialDate || new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(initialDate || getTodayString());
   const [startTime, setStartTime] = useState("09:00");
   const [notes, setNotes] = useState("");
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [returnDays, setReturnDays] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
 
   useEffect(() => {
     if (open) {
@@ -79,7 +85,7 @@ export function AppointmentFormDialog({
       } else {
         setClientId("");
         setAttendantId("");
-        setDate(initialDate || new Date().toISOString().split("T")[0]);
+        setDate(initialDate || getTodayString());
         setStartTime("09:00");
         setNotes("");
         setSelectedServices([]);
@@ -110,6 +116,8 @@ export function AppointmentFormDialog({
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
   };
+
+
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);

@@ -125,6 +125,17 @@ export default function Agenda() {
   };
 
   const handleDelete = async () => {
+    const agendamento = appointments?.find(a => a.id === deleteId);
+
+    if (agendamento?.status === 'completed') {
+      toast({
+        title: "Não é possível excluir",
+        description: "Este agendamento já foi finalizado e o pagamento registrado.",
+        variant: "destructive"
+      });
+      setDeleteId(null);
+      return;
+    }
     if (!deleteId) return;
     try {
       await deleteAppointment.mutateAsync(deleteId);
@@ -224,7 +235,7 @@ export default function Agenda() {
                     selected={selectedDate}
                     onSelect={(d) => d && setSelectedDate(d)}
                     locale={ptBR}
-                  
+
                     modifiers={{
                       hasPending: daysWithPendingAppointments,
                     }}
