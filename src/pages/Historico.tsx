@@ -44,6 +44,12 @@ export default function Historico() {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
+  const formatDateString = (dateStr: string) => {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
+  };
+
   const handleCopyLink = (id: string) => {
     const link = `${window.location.origin}/comprovante/${id}`;
     navigator.clipboard.writeText(link);
@@ -96,7 +102,7 @@ export default function Historico() {
               <div className="bg-muted/50 px-4 py-2 border-b flex justify-between items-center text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {new Date(item.date).toLocaleDateString('pt-BR')}
+                  {formatDateString(item.date)}
                 </span>
                 <Badge variant="outline" className="text-[10px] font-normal border-primary/20 text-primary">
                   {item.payments?.[0]?.method || "Dinheiro"}
@@ -168,7 +174,7 @@ export default function Historico() {
                       ) : filteredHistory?.map((item) => (
                         <TableRow key={item.id} className="hover:bg-muted/30 border-border">
                           <TableCell className="font-medium text-foreground">
-                            {new Date(item.date).toLocaleDateString('pt-BR')}
+                            {formatDateString(item.date)}
                           </TableCell>
                           <TableCell>
                             <span className="font-semibold text-sm text-foreground">{item.clients?.name}</span>

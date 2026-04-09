@@ -94,6 +94,12 @@ export default function Relatorios() {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
+  const formatDateString = (dateStr: string) => {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
+  };
+
   const handleDownloadGeral = () => {
     if (!filteredRecords || filteredRecords.length === 0) {
       toast.error("Sem dados para exportar nesse período.");
@@ -102,7 +108,7 @@ export default function Relatorios() {
     
     const headers = ["Data", "Cliente", "Atendente", "Método", "Valor cobrado", "Comissão"];
     const rows = filteredRecords.map(r => {
-      const dateStr = new Date(r.date).toLocaleDateString('pt-BR');
+      const dateStr = formatDateString(r.date);
       const comissao = r.payments?.[0]?.commission_amount || 0;
       const metodo = r.payments?.[0]?.method || '-';
       return `${dateStr},"${r.clients?.name}","${r.attendants?.name}",${metodo},${r.total_price},${comissao}`;
@@ -319,7 +325,7 @@ export default function Relatorios() {
                           <TableRow><TableCell colSpan={5} className="text-center py-10 text-muted-foreground">Nenhum atendimento no período selecionado.</TableCell></TableRow>
                         ) : filteredRecords?.map((item) => (
                           <TableRow key={item.id} className="hover:bg-muted/30">
-                            <TableCell className="px-4 md:px-6 whitespace-nowrap text-sm">{new Date(item.date).toLocaleDateString('pt-BR')}</TableCell>
+                            <TableCell className="px-4 md:px-6 whitespace-nowrap text-sm">{formatDateString(item.date)}</TableCell>
                             <TableCell className="whitespace-nowrap font-medium text-sm">{item.clients?.name}</TableCell>
                             <TableCell className="whitespace-nowrap text-sm text-muted-foreground">{item.attendants?.name}</TableCell>
                             <TableCell className="text-right whitespace-nowrap text-sm">{formatCurrency(item.total_price)}</TableCell>

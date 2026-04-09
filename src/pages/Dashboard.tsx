@@ -39,12 +39,14 @@ export default function Dashboard() {
       // 2. Faturamento Mensal
       const primeiroDiaMes = new Date();
       primeiroDiaMes.setDate(1);
+      primeiroDiaMes.setHours(0, 0, 0, 0); // Ajuste: garantindo que o início do mês comece à meia-noite
       const { data: pagamentosMes } = await supabase.from("payments").select("amount").gte("created_at", primeiroDiaMes.toISOString());
       const faturamento = pagamentosMes?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
 
       // 3. Dados para Gráfico de Faturamento (Últimos 7 dias)
       const seteDiasAtras = new Date();
-      seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
+      seteDiasAtras.setDate(seteDiasAtras.getDate() - 6); // Ajuste: -6 dias + hoje = 7 dias
+      seteDiasAtras.setHours(0, 0, 0, 0); // Ajuste: Iniciar precisamente na meia-noite local
       const { data: faturamentoSemanal } = await supabase.from("payments").select("amount, created_at").gte("created_at", seteDiasAtras.toISOString());
 
       const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
