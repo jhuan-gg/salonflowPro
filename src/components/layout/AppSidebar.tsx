@@ -6,6 +6,7 @@ import {
   UserCog,
   History,
   Package,
+  BarChart3,
   Sun,
   Moon,
   LogOut,
@@ -26,6 +27,7 @@ const navItems = [
   { title: "Serviços", icon: Scissors, path: "/servicos" },
   { title: "Atendentes", icon: UserCog, path: "/atendentes" },
   { title: "Histórico", icon: History, path: "/historico" },
+  { title: "Relatórios", icon: BarChart3, path: "/relatorios" },
   // { title: "Materiais", icon: Package, path: "/materiais" },
 ];
 

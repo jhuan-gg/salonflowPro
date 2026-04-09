@@ -16,6 +16,7 @@ import Materiais from "./pages/Materiais";
 import Mais from "./pages/Mais";
 import Receipt from "./pages/Receipt"; 
 import NotFound from "./pages/NotFound";
+import Relatorios from "./pages/Relatorios";
 import { ReactNode } from "react";
 import ReloadPrompt from './pages/ReloadPrompt';
 
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/servicos" element={<ProtectedRoute><Servicos /></ProtectedRoute>} />
               <Route path="/atendentes" element={<ProtectedRoute><Atendentes /></ProtectedRoute>} />
               <Route path="/historico" element={<ProtectedRoute><Historico /></ProtectedRoute>} />
+              <Route path="/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
               <Route path="/materiais" element={<ProtectedRoute><Materiais /></ProtectedRoute>} />
               <Route path="/mais" element={<ProtectedRoute><Mais /></ProtectedRoute>} />
               

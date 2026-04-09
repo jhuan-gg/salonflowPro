@@ -1,5 +1,5 @@
 import { AppLayout } from "@/components/layout/AppLayout";
-import { UserCog, History, Package, Sun, Moon, LogOut } from "lucide-react";
+import { UserCog, History, Package, BarChart3, Sun, Moon, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { title: "Atendentes", icon: UserCog, path: "/atendentes" },
   { title: "Histórico", icon: History, path: "/historico" },
+  { title: "Relatórios e Dados", icon: BarChart3, path: "/relatorios" },
   // { title: "Materiais", icon: Package, path: "/materiais" },
 ];
 
